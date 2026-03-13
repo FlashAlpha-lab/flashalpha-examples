@@ -1,0 +1,23 @@
+[build-system]
+requires = ["setuptools>=68"]
+build-backend = "setuptools.backends.legacy:build"
+
+[project]
+name = "flashalpha-examples"
+version = "0.1.0"
+description = "Example scripts for the FlashAlpha API"
+requires-python = ">=3.9"
+dependencies = [
+    "flashalpha",
+    "matplotlib",
+    "numpy",
+]
+
+[project.optional-dependencies]
+test = ["pytest>=7.4"]
+
+[tool.pytest.ini_options]
+testpaths = ["tests"]
+markers = [
+    "integration: tests that call the live FlashAlpha API (require FLASHALPHA_API_KEY)",
+]
