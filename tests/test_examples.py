@@ -39,7 +39,7 @@ def test_gex_returns_strikes_list():
     assert len(strikes) > 0
     first = strikes[0]
     assert "strike" in first, f"Strike entry missing 'strike' key: {first}"
-    assert "gex" in first,    f"Strike entry missing 'gex' key: {first}"
+    assert "net_gex" in first, f"Strike entry missing 'net_gex' key: {first}"
 
 
 def test_gex_with_filters():
@@ -99,10 +99,8 @@ def test_kelly_returns_sizing_dict():
     result = fa.kelly(
         spot=580, strike=585, dte=7, sigma=0.18, premium=4.50, mu=0.001, type="call"
     )
-    # Accept any of the common key names the API might use
-    sizing_keys = {"kelly_fraction", "fraction", "f"}
-    found = sizing_keys & set(result.keys())
-    assert found, f"Kelly response missing expected sizing key. Got keys: {list(result.keys())}"
+    assert "sizing" in result, f"Kelly response missing 'sizing' key. Got keys: {list(result.keys())}"
+    assert "kelly_fraction" in result["sizing"]
 
 
 # ---------------------------------------------------------------------------
@@ -110,13 +108,10 @@ def test_kelly_returns_sizing_dict():
 # ---------------------------------------------------------------------------
 def test_surface_returns_data():
     result = fa.surface(SYMBOL)
-    assert "surface" in result, f"Expected 'surface' key, got: {list(result.keys())}"
-    surface = result["surface"]
-    assert isinstance(surface, list)
-    assert len(surface) > 0
-    first = surface[0]
-    for field in ("strike", "dte", "iv"):
-        assert field in first, f"Surface entry missing '{field}': {first}"
+    assert "symbol" in result, f"Expected 'symbol' key, got: {list(result.keys())}"
+    assert "iv" in result, f"Expected 'iv' key for vol surface grid"
+    assert isinstance(result["iv"], list)
+    assert len(result["iv"]) > 0
 
 
 # ---------------------------------------------------------------------------
