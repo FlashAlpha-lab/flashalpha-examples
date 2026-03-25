@@ -142,3 +142,63 @@ def test_account_returns_info():
     result = fa.account()
     assert isinstance(result, dict)
     assert len(result) > 0
+
+
+# ---------------------------------------------------------------------------
+# 0DTE analytics (example 07)
+# ---------------------------------------------------------------------------
+def test_zero_dte_returns_dict():
+    """fa.zero_dte() returns a non-empty dict (Growth+ endpoint)."""
+    result = fa.zero_dte(SYMBOL)
+    assert isinstance(result, dict), f"Expected dict, got {type(result)}"
+    assert len(result) > 0, "zero_dte returned an empty dict"
+
+
+def test_zero_dte_with_strike_range():
+    """fa.zero_dte() accepts the optional strike_range parameter without error."""
+    result = fa.zero_dte(SYMBOL, strike_range=0.05)
+    assert isinstance(result, dict)
+
+
+# ---------------------------------------------------------------------------
+# Advanced volatility (example 08)
+# ---------------------------------------------------------------------------
+def test_adv_volatility_returns_dict():
+    """fa.adv_volatility() returns a non-empty dict (Alpha+ endpoint)."""
+    result = fa.adv_volatility(SYMBOL)
+    assert isinstance(result, dict), f"Expected dict, got {type(result)}"
+    assert len(result) > 0, "adv_volatility returned an empty dict"
+
+
+def test_adv_volatility_has_expected_sections():
+    """adv_volatility response contains at least one of the documented top-level keys."""
+    result = fa.adv_volatility(SYMBOL)
+    known_keys = {
+        "svi_parameters",
+        "variance_surface",
+        "arbitrage_flags",
+        "greeks_surfaces",
+        "variance_swap",
+    }
+    found = known_keys & set(result.keys())
+    assert found, (
+        f"adv_volatility response has none of the expected keys {known_keys}. "
+        f"Got: {list(result.keys())}"
+    )
+
+
+# ---------------------------------------------------------------------------
+# Comprehensive volatility (example 09)
+# ---------------------------------------------------------------------------
+def test_volatility_returns_dict():
+    """fa.volatility() returns a non-empty dict (Growth+ endpoint)."""
+    result = fa.volatility("TSLA")
+    assert isinstance(result, dict), f"Expected dict, got {type(result)}"
+    assert len(result) > 0, "volatility returned an empty dict"
+
+
+def test_volatility_spy_returns_dict():
+    """fa.volatility() works for SPY as well as single stocks."""
+    result = fa.volatility(SYMBOL)
+    assert isinstance(result, dict)
+    assert len(result) > 0
