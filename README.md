@@ -1,5 +1,7 @@
 # FlashAlpha Examples
 
+[![CI](https://github.com/FlashAlpha-lab/flashalpha-examples/actions/workflows/ci.yml/badge.svg)](https://github.com/FlashAlpha-lab/flashalpha-examples/actions/workflows/ci.yml)
+
 Practical Python examples for options analytics, gamma exposure, volatility surface
 modeling, dealer positioning, 0DTE analytics, and more — all powered by the
 [FlashAlpha API](https://flashalpha.com).
@@ -95,3 +97,13 @@ pytest tests/test_examples.py -m integration -v
 ## License
 
 MIT. See [LICENSE](LICENSE).
+
+---
+
+## Related Repositories
+
+- [FlashAlpha Python SDK](https://github.com/FlashAlpha-lab/flashalpha-python) — `pip install flashalpha`
+- [GEX Explained](https://github.com/FlashAlpha-lab/gex-explained) — gamma exposure theory and code
+- [0DTE Options Analytics](https://github.com/FlashAlpha-lab/0dte-options-analytics) — 0DTE pin risk, expected move, dealer hedging
+- [Volatility Surface Python](https://github.com/FlashAlpha-lab/volatility-surface-python) — SVI, variance swap, skew analysis
+- [Awesome Options Analytics](https://github.com/FlashAlpha-lab/awesome-options-analytics) — curated resource list
