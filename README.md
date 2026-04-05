@@ -2,17 +2,19 @@
 
 [![CI](https://github.com/FlashAlpha-lab/flashalpha-examples/actions/workflows/ci.yml/badge.svg)](https://github.com/FlashAlpha-lab/flashalpha-examples/actions/workflows/ci.yml)
 
-Practical Python examples for options analytics, gamma exposure, volatility surface
+Practical Python examples for options analytics, a **live options screener**
+(filter/rank by GEX, VRP, IV, harvest scores), gamma exposure, volatility surface
 modeling, dealer positioning, 0DTE analytics, and more — all powered by the
 [FlashAlpha API](https://flashalpha.com).
 
 Each file in `notebooks/` is a self-contained Python script. Run it directly,
 paste it into a Jupyter notebook, or share it as-is.
 
-Keywords: gamma exposure python, options analytics API, 0DTE options analytics,
-volatility surface python, implied volatility rank, dealer positioning, GEX dashboard,
-SVI volatility model, variance swap, options flow python, options greeks API,
-IV rank scanner, volatility skew python, options regime analysis.
+Keywords: live options screener, options screener API, gamma exposure python, options analytics API,
+0DTE options analytics, volatility surface python, implied volatility rank, dealer positioning,
+GEX dashboard, VRP harvest screener, variance risk premium, SVI volatility model, variance swap,
+options flow python, options greeks API, IV rank scanner, volatility skew python, options regime analysis,
+short volatility screener, vol selling scanner.
 
 ---
 
@@ -29,6 +31,7 @@ IV rank scanner, volatility skew python, options regime analysis.
 | `notebooks/07_zero_dte_analytics.py` | 0DTE Intraday Analytics | Regime, expected move, pin risk, dealer hedging flows, theta decay for same-day expiries |
 | `notebooks/08_advanced_volatility.py` | Advanced Volatility: SVI and Variance Surface | SVI parameters, variance surface, calendar/butterfly arbitrage detection, greeks surfaces, variance swap rates |
 | `notebooks/09_volatility_analysis.py` | Comprehensive Volatility Analysis | IV rank, term structure, skew, vol risk premium, forward vol, vol regime for TSLA |
+| `notebooks/10_live_options_screener.py` | **Live Options Screener** | **Filter and rank symbols by GEX, VRP, IV, greeks, harvest scores, and custom formulas. Includes harvestable VRP screen, vol scanner, cascading strike/contract filters, and risk-adjusted rankings** |
 
 ---
 
@@ -72,6 +75,7 @@ pytest tests/test_examples.py -m integration -v
 
 | Method | Description | Tier |
 |--------|-------------|------|
+| `fa.screener(...)` | Live options screener — filter/rank by GEX, VRP, IV, harvest score, formulas | Growth+ |
 | `fa.gex(symbol)` | Gamma exposure by strike | Public |
 | `fa.dex(symbol)` | Delta exposure | Public |
 | `fa.vex(symbol)` | Vanna exposure | Public |
@@ -100,9 +104,19 @@ MIT. See [LICENSE](LICENSE).
 
 ---
 
+## SDKs
+
+| Language | Package | Repository |
+|----------|---------|------------|
+| Python | `pip install flashalpha` | [flashalpha-python](https://github.com/FlashAlpha-lab/flashalpha-python) |
+| JavaScript | `npm i flashalpha` | [flashalpha-js](https://github.com/FlashAlpha-lab/flashalpha-js) |
+| .NET | `dotnet add package FlashAlpha` | [flashalpha-dotnet](https://github.com/FlashAlpha-lab/flashalpha-dotnet) |
+| Java | Maven Central | [flashalpha-java](https://github.com/FlashAlpha-lab/flashalpha-java) |
+| Go | `go get github.com/FlashAlpha-lab/flashalpha-go` | [flashalpha-go](https://github.com/FlashAlpha-lab/flashalpha-go) |
+| MCP | Claude / LLM tool server | [flashalpha-mcp](https://github.com/FlashAlpha-lab/flashalpha-mcp) |
+
 ## Related Repositories
 
-- [FlashAlpha Python SDK](https://github.com/FlashAlpha-lab/flashalpha-python) — `pip install flashalpha`
 - [GEX Explained](https://github.com/FlashAlpha-lab/gex-explained) — gamma exposure theory and code
 - [0DTE Options Analytics](https://github.com/FlashAlpha-lab/0dte-options-analytics) — 0DTE pin risk, expected move, dealer hedging
 - [Volatility Surface Python](https://github.com/FlashAlpha-lab/volatility-surface-python) — SVI, variance swap, skew analysis
