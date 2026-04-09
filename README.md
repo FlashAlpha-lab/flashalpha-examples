@@ -32,6 +32,7 @@ short volatility screener, vol selling scanner.
 | `notebooks/08_advanced_volatility.py` | Advanced Volatility: SVI and Variance Surface | SVI parameters, variance surface, calendar/butterfly arbitrage detection, greeks surfaces, variance swap rates |
 | `notebooks/09_volatility_analysis.py` | Comprehensive Volatility Analysis | IV rank, term structure, skew, vol risk premium, forward vol, vol regime for TSLA |
 | `notebooks/10_live_options_screener.py` | **Live Options Screener** | **Filter and rank symbols by GEX, VRP, IV, greeks, harvest scores, and custom formulas. Includes harvestable VRP screen, vol scanner, cascading strike/contract filters, and risk-adjusted rankings** |
+| `notebooks/11_max_pain_analysis.py` | **Max Pain Analysis** | **Max pain strike, pain curve, OI distribution, dealer alignment overlay (gamma flip + walls), expected move context, pin probability, and multi-expiry calendar** |
 
 ---
 
@@ -76,6 +77,7 @@ pytest tests/test_examples.py -m integration -v
 | Method | Description | Tier |
 |--------|-------------|------|
 | `fa.screener(...)` | Live options screener — filter/rank by GEX, VRP, IV, harvest score, formulas | Growth+ |
+| `fa.max_pain(symbol)` | Max pain analysis with dealer alignment, pain curve, pin probability | Growth+ |
 | `fa.gex(symbol)` | Gamma exposure by strike | Public |
 | `fa.dex(symbol)` | Delta exposure | Public |
 | `fa.vex(symbol)` | Vanna exposure | Public |
