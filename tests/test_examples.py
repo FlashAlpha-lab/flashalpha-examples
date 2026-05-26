@@ -109,7 +109,7 @@ def test_kelly_returns_sizing_dict():
 def test_surface_returns_data():
     result = fa.surface(SYMBOL)
     assert "symbol" in result, f"Expected 'symbol' key, got: {list(result.keys())}"
-    assert "iv" in result, f"Expected 'iv' key for vol surface grid"
+    assert "iv" in result, "Expected 'iv' key for vol surface grid"
     assert isinstance(result["iv"], list)
     assert len(result["iv"]) > 0
 

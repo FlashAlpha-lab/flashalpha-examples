@@ -2,9 +2,7 @@
 
 import json
 import pathlib
-import tempfile
 
-import pytest
 
 from scripts.scrub_outputs import scrub_notebook_outputs
 

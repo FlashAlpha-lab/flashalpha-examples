@@ -4,8 +4,6 @@ import pathlib
 import subprocess
 import sys
 
-import nbformat
-import pytest
 
 from cookbook_tools.frontmatter import parse_frontmatter
 from cookbook_tools.notebook_io import (

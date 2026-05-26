@@ -1,0 +1,4 @@
+# Pair every notebook in notebooks/** with a .py file in py:percent format.
+formats = "ipynb,py:percent"
+notebook_metadata_filter = "-all"
+cell_metadata_filter = "-all"

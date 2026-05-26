@@ -5,7 +5,7 @@ import textwrap
 import pytest
 from pydantic import ValidationError
 
-from cookbook_tools.frontmatter import Frontmatter, parse_frontmatter
+from cookbook_tools.frontmatter import parse_frontmatter
 
 VALID_YAML = textwrap.dedent("""\
     ---

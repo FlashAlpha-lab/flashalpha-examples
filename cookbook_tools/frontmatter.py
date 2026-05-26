@@ -8,7 +8,7 @@ from datetime import date
 import yaml
 from pydantic import BaseModel, Field, model_validator
 
-from .tier_map import TIER_ORDER as TIERS, Tier
+from .tier_map import Tier
 
 SLUG_RE = re.compile(r"^[a-z0-9]+(-[a-z0-9]+)*$")
 
