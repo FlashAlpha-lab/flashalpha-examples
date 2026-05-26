@@ -41,3 +41,7 @@ htmlcov/
 .idea/
 *.swp
 *.swo
+
+# cookbook
+.cache/
+.papermill/

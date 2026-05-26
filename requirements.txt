@@ -1,3 +1,5 @@
-flashalpha
+flashalpha>=1.0.1
 matplotlib
 numpy
+pydantic>=2.6
+PyYAML>=6.0
