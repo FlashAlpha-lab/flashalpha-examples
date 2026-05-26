@@ -1,0 +1,64 @@
+# Generated 2026-05-25 from FlashAlpha.Api/Middleware/EndpointAccessMiddleware.cs
+# DO NOT EDIT BY HAND — run scripts/sync_tier_map.py
+# Rules are ordered most-specific first; first prefix match wins.
+tiers: [free, basic, growth, alpha]
+rules:
+  - prefix: /v1/vrp/
+    required: alpha
+  - prefix: /v1/flow/levels/
+    required: growth
+  - prefix: /v1/flow/pin-risk/
+    required: growth
+  - prefix: /v1/flow/summary/
+    required: growth
+  - prefix: /v1/flow/gex/
+    required: growth
+  - prefix: /v1/flow/dex/
+    required: growth
+  - prefix: /v1/flow/dealer-risk/
+    required: growth
+  - prefix: /v1/flow/
+    required: alpha
+  - prefix: /v1/earnings/vrp/
+    required: alpha
+  - prefix: /v1/earnings/dealer-positioning/
+    required: alpha
+  - prefix: /v1/earnings/strategies/
+    required: alpha
+  - prefix: /v1/earnings/screener
+    required: alpha
+  - prefix: /v1/earnings/
+    required: growth
+  - prefix: /v1/screener
+    required: growth
+  - prefix: /v1/exposure/summary/
+    required: growth
+  - prefix: /v1/exposure/narrative/
+    required: growth
+  - prefix: /v1/exposure/history/
+    required: growth
+  - prefix: /v1/exposure/zero-dte/
+    required: growth
+  - prefix: /v1/volatility/
+    required: growth
+  - prefix: /v1/exposure/dex/
+    required: basic
+  - prefix: /v1/exposure/vex/
+    required: basic
+  - prefix: /v1/exposure/chex/
+    required: basic
+  - prefix: /v1/maxpain/
+    required: basic
+  - prefix: /optionquote/
+    required: growth
+  # Catch-all free-tier endpoints (anything not matched above is free).
+  - prefix: /v1/exposure/gex/
+    required: free
+  - prefix: /v1/exposure/levels/
+    required: free
+  - prefix: /stockquote/
+    required: free
+  - prefix: /v1/summary/
+    required: free
+  - prefix: /v1/
+    required: free
