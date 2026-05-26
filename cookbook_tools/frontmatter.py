@@ -4,13 +4,13 @@ from __future__ import annotations
 
 import re
 from datetime import date
-from typing import Literal
 
 import yaml
 from pydantic import BaseModel, Field, model_validator
 
+from .tier_map import TIER_ORDER as TIERS, Tier
+
 SLUG_RE = re.compile(r"^[a-z0-9]+(-[a-z0-9]+)*$")
-TIERS = ("free", "basic", "growth", "alpha")
 
 
 class ExpectedArtifacts(BaseModel):
@@ -21,7 +21,7 @@ class ExpectedArtifacts(BaseModel):
 class Frontmatter(BaseModel):
     slug: str
     title: str
-    tier: Literal["free", "basic", "growth", "alpha"]
+    tier: Tier
     runtime_budget_seconds: int = Field(gt=0)
     max_api_calls: int = Field(gt=0)
     endpoints_used: list[str]
