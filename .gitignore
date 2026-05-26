@@ -45,3 +45,11 @@ htmlcov/
 # cookbook
 .cache/
 .papermill/
+.pytest_cache/
+__pycache__/
+*.egg-info/
+.venv/
+build/
+dist/
+# jupyter ephemeral
+.ipynb_checkpoints/
