@@ -1,125 +1,70 @@
-# FlashAlpha Examples
+# FlashAlpha Cookbook
 
-[![CI](https://github.com/FlashAlpha-lab/flashalpha-examples/actions/workflows/ci.yml/badge.svg)](https://github.com/FlashAlpha-lab/flashalpha-examples/actions/workflows/ci.yml)
+[![PR](https://github.com/FlashAlpha-lab/flashalpha-examples/actions/workflows/pr.yml/badge.svg)](https://github.com/FlashAlpha-lab/flashalpha-examples/actions/workflows/pr.yml)
 
-Practical Python examples for options analytics, a **live options screener**
-(filter/rank by GEX, VRP, IV, harvest scores), gamma exposure, volatility surface
-modeling, dealer positioning, 0DTE analytics, and more — all powered by the
+Production Python recipes for gamma exposure, dealer positioning, SVI vol
+surfaces, VRP, 0DTE, and unusual flow — powered by the
 [FlashAlpha API](https://flashalpha.com).
 
-Each file in `notebooks/` is a self-contained Python script. Run it directly,
-paste it into a Jupyter notebook, or share it as-is.
-
-Keywords: live options screener, options screener API, gamma exposure python, options analytics API,
-0DTE options analytics, volatility surface python, implied volatility rank, dealer positioning,
-GEX dashboard, VRP harvest screener, variance risk premium, SVI volatility model, variance swap,
-options flow python, options greeks API, IV rank scanner, volatility skew python, options regime analysis,
-short volatility screener, vol selling scanner.
-
----
-
-## Examples
-
-| File | Title | What it shows |
-|------|-------|---------------|
-| `notebooks/01_quick_start.py` | Getting Started with FlashAlpha | GEX, exposure levels, live quote, BSM greeks in 30 lines |
-| `notebooks/02_gex_dashboard.py` | Build a GEX Dashboard | Bar chart of gamma exposure by strike with gamma flip, call wall, put wall annotated |
-| `notebooks/03_iv_rank_scanner.py` | IV Rank Scanner | Scan SPY/QQQ/AAPL/TSLA/NVDA/AMZN/META/MSFT and rank by ATM implied volatility |
-| `notebooks/04_vol_surface_3d.py` | 3D Volatility Surface | 3D scatter/mesh of the SPY implied volatility surface (strike x DTE x IV) |
-| `notebooks/05_dealer_positioning.py` | Understanding Dealer Positioning | Net GEX/DEX/VEX/CHEX, hedging estimates, zero-DTE contribution, narrative |
-| `notebooks/06_kelly_sizing.py` | Kelly Criterion for Options | Optimal position sizing via greeks, IV solver, and Kelly fraction |
-| `notebooks/07_zero_dte_analytics.py` | 0DTE Intraday Analytics | Regime, expected move, pin risk, dealer hedging flows, theta decay for same-day expiries |
-| `notebooks/08_advanced_volatility.py` | Advanced Volatility: SVI and Variance Surface | SVI parameters, variance surface, calendar/butterfly arbitrage detection, greeks surfaces, variance swap rates |
-| `notebooks/09_volatility_analysis.py` | Comprehensive Volatility Analysis | IV rank, term structure, skew, vol risk premium, forward vol, vol regime for TSLA |
-| `notebooks/10_live_options_screener.py` | **Live Options Screener** | **Filter and rank symbols by GEX, VRP, IV, greeks, harvest scores, and custom formulas. Includes harvestable VRP screen, vol scanner, cascading strike/contract filters, and risk-adjusted rankings** |
-| `notebooks/11_max_pain_analysis.py` | **Max Pain Analysis** | **Max pain strike, pain curve, OI distribution, dealer alignment overlay (gamma flip + walls), expected move context, pin probability, and multi-expiry calendar** |
-
----
-
-## Installation
+Every recipe is a **jupytext-paired** `(.py + .ipynb)` file with executed
+outputs committed. Open any recipe in Colab via its badge, or `pip install
+flashalpha` and run the `.py` directly.
 
 ```bash
 pip install flashalpha matplotlib numpy
-```
-
-Set your API key once:
-
-```bash
 export FLASHALPHA_API_KEY="your_key_here"
+python notebooks/tier-a-hooks/01-gex-dashboard.py
 ```
 
-Then run any example:
+## Catalog
+
+See [COOKBOOK.md](COOKBOOK.md) for the full catalog (added in Phase 1+).
+
+Phase 0 ships the foundation and one canonical recipe:
+[01-gex-dashboard](notebooks/tier-a-hooks/01-gex-dashboard.ipynb).
+
+## Authoring a new recipe
 
 ```bash
-python notebooks/01_quick_start.py
+python -m scripts.new_recipe \
+  --slug 02-gamma-flip-cross-index \
+  --title "Find Today's Gamma Flip Across Indexes" \
+  --tier free \
+  --tier-dir tier-a-hooks
 ```
 
-Get an API key at [flashalpha.com](https://flashalpha.com).
-
----
-
-## Running the Tests
+This creates a paired `(.py, .ipynb)` skeleton with frontmatter, CTA cells,
+and a starter code block. Fill in the body, run it once against live API
+to record the cassette:
 
 ```bash
-pip install pytest
-
-# Syntax validation (no API key needed)
-pytest tests/test_notebooks_syntax.py -v
-
-# Integration tests (requires FLASHALPHA_API_KEY)
-pytest tests/test_examples.py -m integration -v
+python -m scripts.record_cassettes notebooks/tier-a-hooks/02-gamma-flip-cross-index.ipynb
 ```
 
----
+Then `pytest` will replay it from cassette on every PR.
 
-## API Methods Used
+See [docs/superpowers/specs/2026-05-25-flashalpha-cookbook-design.md](docs/superpowers/specs/2026-05-25-flashalpha-cookbook-design.md) for the full spec.
 
-| Method | Description | Tier |
-|--------|-------------|------|
-| `fa.screener(...)` | Live options screener — filter/rank by GEX, VRP, IV, harvest score, formulas | Growth+ |
-| `fa.max_pain(symbol)` | Max pain analysis with dealer alignment, pain curve, pin probability | Growth+ |
-| `fa.gex(symbol)` | Gamma exposure by strike | Public |
-| `fa.dex(symbol)` | Delta exposure | Public |
-| `fa.vex(symbol)` | Vanna exposure | Public |
-| `fa.chex(symbol)` | Charm exposure | Public |
-| `fa.exposure_levels(symbol)` | Key levels (gamma flip, call/put wall) | Public |
-| `fa.exposure_summary(symbol)` | Full exposure summary | Growth+ |
-| `fa.narrative(symbol)` | Verbal regime analysis | Growth+ |
-| `fa.zero_dte(symbol)` | 0DTE regime, expected move, pin risk, hedging, theta decay | Growth+ |
-| `fa.stock_quote(ticker)` | Live bid/ask/mid | Public |
-| `fa.stock_summary(symbol)` | Price, vol, exposure, macro | Public |
-| `fa.greeks(...)` | BSM greeks (delta, gamma, theta, vega) | Public |
-| `fa.iv(...)` | Implied vol solver | Public |
-| `fa.kelly(...)` | Kelly optimal position sizing | Growth+ |
-| `fa.surface(symbol)` | Full IV surface | Public |
-| `fa.volatility(symbol)` | IV rank, term structure, skew, vol regime, forward vol | Growth+ |
-| `fa.adv_volatility(symbol)` | SVI parameters, variance surface, arbitrage flags, greeks surfaces, variance swap | Alpha+ |
-| `fa.options(ticker)` | Options chain metadata | Public |
-| `fa.tickers()` | All available tickers | Public |
-| `fa.account()` | Account info | Public |
+## Test layers
 
----
+| Layer | What it checks | When it runs |
+|---|---|---|
+| **0** Secrets | gitleaks + auth-header scrub + regex sweep over code & outputs | pre-commit + PR |
+| **1** Structural | frontmatter schema, CTA UTMs, slug ↔ file, AST scan, link 200s | PR |
+| **2** Execution | papermill + vcrpy cassette replay; runtime + call budgets | PR |
+| **3** Golden | DataFrame & chart snapshots for backtest recipes | nightly (Phase 6+) |
+| **4** Tier static | endpoints_used ⊆ tier (`endpoint_tiers.yaml`) | PR |
+| **5** Funnel sanity | UTM rendering, link 200s, weekly stats | weekly (Phase 8) |
+
+## Repository structure
+
+- `notebooks/tier-{a,b,c,d,e,f,g}-*/` — recipes by tier
+- `cookbook_tools/` — shared Python helpers (Pydantic schema, tier-map, CTA renderer)
+- `scripts/` — CLI tools (`new_recipe.py`, `scrub_outputs.py`, `record_cassettes.py`, `sync_tier_map.py`)
+- `tests/` — Layer 0/1/2/4 test suites + cassettes
+- `endpoint_tiers.yaml` — mirror of API tier middleware (`scripts/sync_tier_map.py` to regenerate)
+- `docs/superpowers/{specs,plans}/` — design + implementation docs
 
 ## License
 
 MIT. See [LICENSE](LICENSE).
-
----
-
-## SDKs
-
-| Language | Package | Repository |
-|----------|---------|------------|
-| Python | `pip install flashalpha` | [flashalpha-python](https://github.com/FlashAlpha-lab/flashalpha-python) |
-| JavaScript | `npm i flashalpha` | [flashalpha-js](https://github.com/FlashAlpha-lab/flashalpha-js) |
-| .NET | `dotnet add package FlashAlpha` | [flashalpha-dotnet](https://github.com/FlashAlpha-lab/flashalpha-dotnet) |
-| Java | Maven Central | [flashalpha-java](https://github.com/FlashAlpha-lab/flashalpha-java) |
-| Go | `go get github.com/FlashAlpha-lab/flashalpha-go` | [flashalpha-go](https://github.com/FlashAlpha-lab/flashalpha-go) |
-| MCP | Claude / LLM tool server | [flashalpha-mcp](https://github.com/FlashAlpha-lab/flashalpha-mcp) |
-
-## Related Repositories
-
-- [GEX Explained](https://github.com/FlashAlpha-lab/gex-explained) — gamma exposure theory and code
-- [0DTE Options Analytics](https://github.com/FlashAlpha-lab/0dte-options-analytics) — 0DTE pin risk, expected move, dealer hedging
-- [Volatility Surface Python](https://github.com/FlashAlpha-lab/volatility-surface-python) — SVI, variance swap, skew analysis
-- [Awesome Options Analytics](https://github.com/FlashAlpha-lab/awesome-options-analytics) — curated resource list
