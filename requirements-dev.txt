@@ -2,7 +2,6 @@
 pytest>=7.4
 pytest-approval>=0.2
 papermill>=2.5
-nbmake>=1.5
 nbformat>=5.10
 vcrpy>=6.0
 # Format / lint
@@ -11,9 +10,6 @@ nbqa>=1.7
 ruff>=0.4
 # Pre-commit
 pre-commit>=3.6
-# Helpers
-pydantic>=2.6
-PyYAML>=6.0
 # CTA UTM URL extraction
 yarl>=1.9
 # Image hash (used by Layer 3 later; harmless to install now)
