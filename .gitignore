@@ -23,8 +23,9 @@ htmlcov/
 .tox/
 
 # Jupyter
+# NOTE: .ipynb files ARE committed for cookbook recipes (executed outputs are
+# part of the deliverable). Only the scratch-dir is ignored.
 .ipynb_checkpoints/
-*.ipynb
 
 # Generated output files
 *.png
@@ -41,3 +42,15 @@ htmlcov/
 .idea/
 *.swp
 *.swo
+
+# cookbook
+.cache/
+.papermill/
+.pytest_cache/
+__pycache__/
+*.egg-info/
+.venv/
+build/
+dist/
+# jupyter ephemeral
+.ipynb_checkpoints/

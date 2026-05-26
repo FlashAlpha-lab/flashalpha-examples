@@ -1,0 +1,37 @@
+repos:
+  - repo: https://github.com/gitleaks/gitleaks
+    rev: v8.18.4
+    hooks:
+      - id: gitleaks
+        args: ["protect", "--staged", "--redact", "--verbose"]
+
+  - repo: local
+    hooks:
+      - id: scrub-notebook-outputs
+        name: Scrub auth headers from notebook outputs
+        entry: python -m scripts.scrub_outputs
+        language: system
+        files: '\.ipynb$'
+        pass_filenames: true
+
+  - repo: https://github.com/mwouts/jupytext
+    rev: v1.16.4
+    hooks:
+      - id: jupytext
+        args: ["--sync"]
+        # Only Phase-0+ paired recipes under notebooks/tier-*/.
+        # Legacy notebooks/0*_*.py scripts are out of scope until Phase 1.
+        files: '^notebooks/tier-[a-g]-[^/]+/[^/]+\.(py|ipynb)$'
+
+  - repo: https://github.com/nbQA-dev/nbQA
+    rev: 1.8.5
+    hooks:
+      - id: nbqa-ruff
+        files: '^notebooks/tier-[a-g]-[^/]+/[^/]+\.ipynb$'
+        args: ["--fix"]
+
+  - repo: https://github.com/astral-sh/ruff-pre-commit
+    rev: v0.4.10
+    hooks:
+      - id: ruff
+        files: '(cookbook_tools|scripts|tests)/.*\.py$'

@@ -1,0 +1,50 @@
+name: PR
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+    branches: [main]
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    strategy:
+      fail-fast: false
+      matrix:
+        python-version: ["3.10", "3.11", "3.12", "3.13"]
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-python@v5
+        with:
+          python-version: ${{ matrix.python-version }}
+          cache: pip
+
+      - name: Install dev deps
+        run: python -m pip install -e ".[dev]"
+
+      - name: Install Jupyter kernel
+        run: python -m ipykernel install --user --name python3
+
+      - name: Layer 0 — pre-commit hooks (excluding network)
+        run: |
+          python -m pip install pre-commit
+          pre-commit run --all-files --hook-stage manual || true
+          # Re-run to detect mutations from auto-fixers.
+          pre-commit run --all-files
+
+      - name: Layer 0 — secret scan (test backstop)
+        run: pytest tests/test_layer0_secrets.py -v
+
+      - name: Layer 1 — structural
+        run: pytest tests/test_layer1_structural.py -v
+
+      - name: Layer 4 — static tier gating
+        run: pytest tests/test_layer4_tier_static.py -v
+
+      - name: Cookbook tools — unit tests
+        run: pytest tests/cookbook_tools/ -v
+
+      - name: Layer 2 — cassette replay
+        run: pytest tests/test_layer2_execution.py -v -m cassette
