@@ -17,7 +17,7 @@ from cookbook_tools.frontmatter import Frontmatter
 from cookbook_tools.notebook_io import (
     load_notebook,
 )
-from cookbook_tools.tier_map import TierMap, tier_covers  # noqa: F401
+from cookbook_tools.tier_map import TierMap, tier_covers
 
 _REQUIREMENTS = (
     pathlib.Path(__file__).resolve().parents[1] / "requirements.txt"
@@ -158,3 +158,74 @@ def test_imports_present_in_requirements(recipe_path: pathlib.Path):
                     f"{recipe_path.name} imports {name!r} but it is not in "
                     f"requirements.txt"
                 )
+
+
+def test_mid_gate_cells_precede_gated_calls(
+    recipe_path: pathlib.Path,
+    recipe_fm: Frontmatter,
+    tier_map: TierMap,
+):
+    """For every cell index in `tier_gated_cells`, the immediately preceding
+    cell must be a markdown gate cell naming the endpoint and required tier.
+    """
+    from cookbook_tools.cta_template import render_gate_cell
+
+    if not recipe_fm.tier_gated_cells:
+        pytest.skip("no tier-gated cells declared in this recipe")
+
+    nb = load_notebook(recipe_path)
+    cells = nb["cells"]
+
+    for idx in recipe_fm.tier_gated_cells:
+        # The gated cell itself must exist and be a code cell.
+        assert 0 <= idx < len(cells), (
+            f"tier_gated_cells references missing index {idx}"
+        )
+        gated = cells[idx]
+        assert gated["cell_type"] == "code", (
+            f"tier_gated_cells[{idx}] points at a {gated['cell_type']!r} "
+            f"cell — it should point at a code cell"
+        )
+
+        # The preceding cell must be a markdown gate cell.
+        assert idx > 0, "tier-gated cell at index 0 cannot have a preceding gate"
+        prev = cells[idx - 1]
+        assert prev["cell_type"] == "markdown", (
+            f"cell preceding tier-gated index {idx} must be a markdown "
+            f"gate cell; got {prev['cell_type']!r}"
+        )
+
+        # The gated cell's source must mention exactly one /v1/* endpoint;
+        # use it to find the required tier and validate the gate cell text.
+        source = (
+            "".join(gated["source"])
+            if isinstance(gated["source"], list)
+            else gated["source"]
+        )
+        m = re.search(r"(/v1/[A-Za-z0-9/_\-{}]+)", source)
+        assert m, (
+            f"tier-gated cell {idx} has no /v1/* endpoint reference; "
+            f"cannot validate gate cell"
+        )
+        endpoint = m.group(1).replace("{symbol}", "SPY")
+        required = tier_map.required_for(endpoint)
+        assert not tier_covers(recipe_fm.tier, required), (
+            f"cell {idx} declared in tier_gated_cells but endpoint "
+            f"{endpoint!r} requires only {required!r}, which the recipe's "
+            f"tier {recipe_fm.tier!r} already covers — drop from "
+            f"tier_gated_cells"
+        )
+
+        expected_gate = render_gate_cell(
+            endpoint=endpoint, required_tier=required, fm=recipe_fm
+        ).rstrip()
+        actual_gate = (
+            "".join(prev["source"])
+            if isinstance(prev["source"], list)
+            else prev["source"]
+        ).strip()
+        assert expected_gate.strip() == actual_gate, (
+            f"gate cell preceding tier-gated cell {idx} doesn't match "
+            f"rendered gate.\nexpected:\n{expected_gate}\n"
+            f"got:\n{actual_gate}\n"
+        )
