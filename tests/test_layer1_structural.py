@@ -36,30 +36,41 @@ def test_slug_matches_filename(recipe_path: pathlib.Path, recipe_fm: Frontmatter
     )
 
 
-def test_top_cell_present_with_correct_signup_utm(
+def test_top_cell_matches_rendered_cta_exactly(
     recipe_path: pathlib.Path, recipe_fm: Frontmatter
 ):
     nb = load_notebook(recipe_path)
     tier_dir = recipe_path.parent.name
     expected_top = render_top_cell(recipe_fm, tier_dir=tier_dir).rstrip()
-    # Top cell is the second cell (after the frontmatter raw cell).
     md_cells = [c for c in nb["cells"] if c["cell_type"] == "markdown"]
     assert md_cells, "no markdown cells found"
-    rendered_top = "".join(md_cells[0]["source"]) if isinstance(md_cells[0]["source"], list) else md_cells[0]["source"]
-    assert expected_top.strip() in rendered_top.strip(), (
-        f"top CTA cell content mismatch in {recipe_path.name}"
+    rendered_top = (
+        "".join(md_cells[0]["source"])
+        if isinstance(md_cells[0]["source"], list)
+        else md_cells[0]["source"]
+    )
+    assert expected_top.strip() == rendered_top.strip(), (
+        f"top CTA cell content mismatch in {recipe_path.name}:\n"
+        f"expected:\n{expected_top}\n"
+        f"got:\n{rendered_top}\n"
     )
 
 
-def test_bottom_cell_present_with_correct_utm(
+def test_bottom_cell_matches_rendered_cta_exactly(
     recipe_path: pathlib.Path, recipe_fm: Frontmatter
 ):
     nb = load_notebook(recipe_path)
     expected_bottom = render_bottom_cell(recipe_fm).rstrip()
     md_cells = [c for c in nb["cells"] if c["cell_type"] == "markdown"]
-    rendered_bottom = "".join(md_cells[-1]["source"]) if isinstance(md_cells[-1]["source"], list) else md_cells[-1]["source"]
-    assert expected_bottom.strip() in rendered_bottom.strip(), (
-        f"bottom CTA cell content mismatch in {recipe_path.name}"
+    rendered_bottom = (
+        "".join(md_cells[-1]["source"])
+        if isinstance(md_cells[-1]["source"], list)
+        else md_cells[-1]["source"]
+    )
+    assert expected_bottom.strip() == rendered_bottom.strip(), (
+        f"bottom CTA cell content mismatch in {recipe_path.name}:\n"
+        f"expected:\n{expected_bottom}\n"
+        f"got:\n{rendered_bottom}\n"
     )
 
 
