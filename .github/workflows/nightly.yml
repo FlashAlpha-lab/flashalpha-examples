@@ -38,9 +38,10 @@ jobs:
 
   live-smoke:
     runs-on: ubuntu-latest
-    # Run only when the secret is configured. Without it, papermill would
-    # raise KeyError at the recipe's `os.environ["FLASHALPHA_API_KEY"]`.
-    if: ${{ secrets.FLASHALPHA_API_KEY != '' }}
+    # Note: GitHub Actions forbids `secrets.X` in job-level `if:` expressions
+    # (https://docs.github.com/en/actions/security-guides/encrypted-secrets).
+    # The job runs unconditionally; each heavy step is gated on a step-level
+    # output that reads the secret from `env:`.
     steps:
       - uses: actions/checkout@v4
 
@@ -49,13 +50,28 @@ jobs:
           python-version: "3.12"
           cache: pip
 
-      - name: Install dev deps + ipykernel (papermill needs a registered kernel)
+      - name: Check if FLASHALPHA_API_KEY is configured
+        id: check_secret
+        env:
+          FLASHALPHA_API_KEY: ${{ secrets.FLASHALPHA_API_KEY }}
+        run: |
+          if [ -n "$FLASHALPHA_API_KEY" ]; then
+            echo "available=true" >> "$GITHUB_OUTPUT"
+            echo "FLASHALPHA_API_KEY is configured — running live smoke"
+          else
+            echo "available=false" >> "$GITHUB_OUTPUT"
+            echo "FLASHALPHA_API_KEY not configured — skipping live smoke. Set the secret at /settings/secrets/actions to enable."
+          fi
+
+      - name: Install dev deps + ipykernel
+        if: steps.check_secret.outputs.available == 'true'
         run: |
           python -m pip install -e ".[dev]"
           python -m pip install ipykernel
           python -m ipykernel install --user --name python3
 
       - name: Re-execute every recipe against live API
+        if: steps.check_secret.outputs.available == 'true'
         env:
           FLASHALPHA_API_KEY: ${{ secrets.FLASHALPHA_API_KEY }}
         run: |
@@ -69,6 +85,7 @@ jobs:
           done
 
       - name: Scrub auth headers (defensive)
+        if: steps.check_secret.outputs.available == 'true'
         run: |
           for nb in notebooks/tier-*/[0-9]*.ipynb; do
             if [ -f "$nb" ]; then
@@ -77,6 +94,7 @@ jobs:
           done
 
       - name: Open drift PR if anything changed
+        if: steps.check_secret.outputs.available == 'true'
         uses: peter-evans/create-pull-request@v6
         with:
           commit-message: "nightly: refresh recipe outputs from live API"
