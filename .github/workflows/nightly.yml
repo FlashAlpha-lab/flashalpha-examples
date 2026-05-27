@@ -44,6 +44,11 @@ jobs:
     # The variable acts as an explicit opt-in marker — the secret alone
     # doesn't activate the job, preventing fingerprinting of secret presence.
     if: ${{ vars.LIVE_SMOKE_ENABLED == 'true' }}
+    # peter-evans/create-pull-request needs write to push the drift branch
+    # and open the PR. Scoped to this job only — link-check stays read-only.
+    permissions:
+      contents: write
+      pull-requests: write
     steps:
       - uses: actions/checkout@v4
 
