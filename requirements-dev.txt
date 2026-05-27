@@ -1,6 +1,8 @@
 # Test infra
 pytest>=7.4
 pytest-approval>=0.2
+pytest-cov>=4.1
+hypothesis>=6.100
 papermill>=2.5
 nbformat>=5.10
 vcrpy>=6.0
@@ -12,5 +14,7 @@ ruff>=0.4
 pre-commit>=3.6
 # CTA UTM URL extraction
 yarl>=1.9
+# Link liveness (Layer 1 + Layer 5)
+requests>=2.31
 # Image hash (used by Layer 3 later; harmless to install now)
 ImageHash>=4.3
