@@ -15,7 +15,6 @@ from cookbook_tools.cta_template import (
 )
 from cookbook_tools.frontmatter import Frontmatter
 from cookbook_tools.notebook_io import (
-    extract_markdown_urls,  # noqa: F401
     load_notebook,
 )
 from cookbook_tools.tier_map import TierMap, tier_covers  # noqa: F401

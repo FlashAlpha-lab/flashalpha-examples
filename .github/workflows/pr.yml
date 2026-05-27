@@ -27,6 +27,11 @@ jobs:
       - name: Install Jupyter kernel
         run: python -m ipykernel install --user --name python3
 
+      - name: Layer 0 — gitleaks (full repo scan)
+        run: |
+          curl -sSfL https://github.com/gitleaks/gitleaks/releases/download/v8.18.4/gitleaks_8.18.4_linux_x64.tar.gz | tar xz
+          ./gitleaks detect --source . --redact --verbose --no-git
+
       - name: Layer 0 — pre-commit hooks (excluding network)
         run: |
           python -m pip install pre-commit
