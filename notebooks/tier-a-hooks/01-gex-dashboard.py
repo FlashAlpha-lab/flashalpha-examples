@@ -13,7 +13,7 @@
 # expected_artifacts:
 #   dataframes: []
 #   charts: [gex_chart.png]
-# last_validated_live: 2026-05-25
+# last_validated_live: 2026-05-27
 # ---
 
 # %% [markdown]
