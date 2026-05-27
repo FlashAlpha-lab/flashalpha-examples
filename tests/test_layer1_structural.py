@@ -84,31 +84,84 @@ def test_no_hardcoded_api_key_in_source(recipe_path: pathlib.Path):
         )
 
 
-def test_no_broad_except_hiding_errors(recipe_path: pathlib.Path):
-    """Code cells must not silently swallow API errors."""
+def test_no_silenced_errors(recipe_path: pathlib.Path):
+    """Code cells must not silently swallow API errors. Forbids:
+    - `except:` or `except Exception:` with only `pass` body
+    - `except:` whose body has no `raise` and no `log.error/critical/exception`
+    - `%%capture` cell magics (which suppress all output, including tracebacks)
+    """
     nb = load_notebook(recipe_path)
     for cell in nb.get("cells", []):
         if cell.get("cell_type") != "code":
             continue
-        source = "".join(cell["source"]) if isinstance(cell["source"], list) else cell["source"]
-        if not source.strip():
+        source = (
+            "".join(cell["source"])
+            if isinstance(cell["source"], list)
+            else cell["source"]
+        )
+        stripped = source.strip()
+        if not stripped:
             continue
-        # Skip cells with %% magics (not valid Python on their own).
-        if source.lstrip().startswith("%"):
+
+        # Forbid %%capture (and its variants like %%capture --no-stderr).
+        first_line = stripped.splitlines()[0]
+        if first_line.lstrip().startswith("%%capture"):
+            pytest.fail(
+                f"{recipe_path.name}: cell starts with {first_line!r} — "
+                f"%%capture suppresses errors and is forbidden"
+            )
+
+        # Skip cells with %% magics for AST parsing (not valid Python).
+        if stripped.startswith("%"):
             continue
         try:
             tree = ast.parse(source)
         except SyntaxError:
             pytest.fail(f"SyntaxError in {recipe_path.name}: cell does not parse")
+
         for node in ast.walk(tree):
-            if isinstance(node, ast.ExceptHandler):
-                # Disallow bare except, or `except Exception:` with only `pass`.
-                body_is_pass_only = (
-                    len(node.body) == 1 and isinstance(node.body[0], ast.Pass)
+            if not isinstance(node, ast.ExceptHandler):
+                continue
+            if _except_body_is_silencing(node.body):
+                pytest.fail(
+                    f"{recipe_path.name}: except handler at line "
+                    f"{node.lineno} silently swallows errors — must either "
+                    f"`raise` or call a logging function (e.g. "
+                    f"`log.error(...)`, `logging.exception(...)`)"
                 )
-                assert not body_is_pass_only, (
-                    f"Bare/empty except in {recipe_path.name} hides errors"
-                )
+
+
+def _except_body_is_silencing(body: list[ast.stmt]) -> bool:
+    """True if the except body neither re-raises nor logs at error+ level."""
+    # Pure-pass body
+    if len(body) == 1 and isinstance(body[0], ast.Pass):
+        return True
+
+    has_raise = False
+    has_error_log = False
+    for stmt in body:
+        for node in ast.walk(stmt):
+            if isinstance(node, ast.Raise):
+                has_raise = True
+            elif isinstance(node, ast.Call):
+                fn = _call_func_name(node).lower()
+                # logger.error / logger.exception / logger.critical /
+                # logging.error / log.error / _log.exception / etc.
+                if any(level in fn for level in ("error", "exception", "critical")):
+                    has_error_log = True
+    return not (has_raise or has_error_log)
+
+
+def _call_func_name(call: ast.Call) -> str:
+    """Best-effort dotted name for a Call. Returns '' if not resolvable."""
+    f = call.func
+    parts: list[str] = []
+    while isinstance(f, ast.Attribute):
+        parts.append(f.attr)
+        f = f.value
+    if isinstance(f, ast.Name):
+        parts.append(f.id)
+    return ".".join(reversed(parts))
 
 
 def test_endpoints_used_have_known_tier(
