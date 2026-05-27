@@ -44,11 +44,6 @@ jobs:
     # The variable acts as an explicit opt-in marker — the secret alone
     # doesn't activate the job, preventing fingerprinting of secret presence.
     if: ${{ vars.LIVE_SMOKE_ENABLED == 'true' }}
-    # peter-evans/create-pull-request needs write to push the drift branch
-    # and open the PR. Scoped to this job only — link-check stays read-only.
-    permissions:
-      contents: write
-      pull-requests: write
     steps:
       - uses: actions/checkout@v4
 
@@ -71,7 +66,6 @@ jobs:
           for nb in notebooks/tier-*/[0-9]*.ipynb; do
             if [ -f "$nb" ]; then
               echo "::group::papermill $nb"
-              # In-place execution so the drift PR sees actual output changes.
               python -m papermill "$nb" "$nb" --kernel python3
               echo "::endgroup::"
             fi
@@ -85,15 +79,16 @@ jobs:
             fi
           done
 
-      - name: Open drift PR if anything changed
-        uses: peter-evans/create-pull-request@v6
-        with:
-          commit-message: "nightly: refresh recipe outputs from live API"
-          title: "Nightly drift: recipe outputs changed against live API"
-          body: |
-            Automated nightly re-execution detected changes in one or more
-            recipe outputs. Review the diff — could be a stale `last_validated_live`
-            timestamp (benign), an API field rename (action required), or
-            real market-data drift (benign for non-deterministic recipes).
-          branch: nightly/drift
-          delete-branch: true
+      - name: Flag drift (fail the run if any recipe output changed)
+        # Org policy blocks GH Actions from creating PRs, so we surface drift
+        # as a red CI run instead of an auto-PR. The maintainer reads the diff
+        # from the failed run logs, decides if it's real drift or benign noise,
+        # and commits the regenerated outputs manually.
+        run: |
+          set +e
+          if ! git diff --exit-code -- notebooks/tier-*/[0-9]*.ipynb; then
+            echo "::error::Recipe output drift detected against live API."
+            echo "::error::Pull the diff locally, validate, and commit if real."
+            exit 1
+          fi
+          echo "No drift — recipe outputs match committed state."

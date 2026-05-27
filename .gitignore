@@ -36,6 +36,43 @@ htmlcov/
 .env
 .env.*
 *.env
+.envrc
+
+# Credential files (any name pattern that commonly holds secrets)
+secrets.json
+secrets.yaml
+secrets.yml
+credentials.json
+credentials.yaml
+credentials.yml
+service-account.json
+.netrc
+_netrc
+
+# Cryptographic material — private keys, certs, signing material
+*.key
+*.pem
+*.p12
+*.pfx
+*.crt
+*.cer
+*.csr
+*.pkcs12
+id_rsa
+id_rsa.*
+id_dsa
+id_dsa.*
+id_ecdsa
+id_ecdsa.*
+id_ed25519
+id_ed25519.*
+
+# Common local-override files that hide secrets in dev environments
+local_settings.py
+settings.local.py
+config.local.*
+*.secret
+*.secrets
 
 # IDE
 .vscode/
