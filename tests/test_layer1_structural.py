@@ -282,3 +282,31 @@ def test_mid_gate_cells_precede_gated_calls(
             f"rendered gate.\nexpected:\n{expected_gate}\n"
             f"got:\n{actual_gate}\n"
         )
+
+
+_PER_CELL_MAX_BYTES = 1 * 1024 * 1024   # 1 MB
+_PER_NOTEBOOK_MAX_BYTES = 5 * 1024 * 1024  # 5 MB
+
+
+def test_output_size_within_caps(recipe_path: pathlib.Path):
+    """Reject runaway cell outputs (accidentally-pasted screenshots, huge
+    DataFrames, etc.)."""
+    import json as _json
+
+    nb = load_notebook(recipe_path)
+    total_bytes = 0
+    for cell_idx, cell in enumerate(nb.get("cells", [])):
+        if cell.get("cell_type") != "code":
+            continue
+        for output in cell.get("outputs", []):
+            blob = _json.dumps(output)
+            cell_bytes = len(blob.encode("utf-8"))
+            total_bytes += cell_bytes
+            assert cell_bytes < _PER_CELL_MAX_BYTES, (
+                f"{recipe_path.name}: cell {cell_idx} output is "
+                f"{cell_bytes // 1024} KB, exceeds 1 MB cap"
+            )
+    assert total_bytes < _PER_NOTEBOOK_MAX_BYTES, (
+        f"{recipe_path.name}: total cell outputs are "
+        f"{total_bytes // 1024} KB, exceeds 5 MB cap"
+    )
