@@ -26,8 +26,12 @@ jobs:
 
       - name: Layer 0 — gitleaks (full repo scan)
         run: |
-          curl -sSfL https://github.com/gitleaks/gitleaks/releases/download/v8.18.4/gitleaks_8.18.4_linux_x64.tar.gz | tar xz
-          ./gitleaks detect --source . --redact --verbose --no-git
+          # Extract gitleaks to /tmp so its bundled README/docs (full of regex
+          # examples for AWS/Sidekiq/etc secrets) don't pollute the source scan.
+          mkdir -p /tmp/gitleaks
+          curl -sSfL https://github.com/gitleaks/gitleaks/releases/download/v8.18.4/gitleaks_8.18.4_linux_x64.tar.gz \
+            | tar xz -C /tmp/gitleaks
+          /tmp/gitleaks/gitleaks detect --source . --redact --verbose --no-git
 
       - name: Layer 0 — pre-commit hooks (excluding network)
         run: |
