@@ -79,16 +79,29 @@ jobs:
             fi
           done
 
-      - name: Flag drift (fail the run if any recipe output changed)
-        # Org policy blocks GH Actions from creating PRs, so we surface drift
-        # as a red CI run instead of an auto-PR. The maintainer reads the diff
-        # from the failed run logs, decides if it's real drift or benign noise,
-        # and commits the regenerated outputs manually.
+      - name: Report drift (don't fail — live-data recipes drift every run)
+        # Live-market recipes (anything calling fa.gex/fa.exposure_levels/etc
+        # without a locked `at=` timestamp) produce different outputs on every
+        # nightly run by design. Phase 6 will add deterministic backtest
+        # recipes that SHOULD fail on drift — handled then via a separate
+        # check that reads frontmatter.expected_artifacts.
+        #
+        # For now: log the diff stats and pass. The nightly run's purpose is
+        # "did papermill succeed against live API" — output drift is signal
+        # but not failure.
         run: |
           set +e
-          if ! git diff --exit-code -- notebooks/tier-*/[0-9]*.ipynb; then
-            echo "::error::Recipe output drift detected against live API."
-            echo "::error::Pull the diff locally, validate, and commit if real."
-            exit 1
+          if git diff --quiet -- notebooks/tier-*/[0-9]*.ipynb; then
+            echo "No drift — recipe outputs match committed state (rare for live-data recipes)."
+          else
+            echo "::notice::Recipe output drift detected against live API."
+            echo "Files changed:"
+            git diff --stat -- notebooks/tier-*/[0-9]*.ipynb
+            echo ""
+            echo "This is expected for live-data recipes. The recipes ran successfully."
+            echo "If you want to refresh committed outputs, run locally:"
+            echo "  python -m papermill notebooks/tier-a-hooks/01-gex-dashboard.ipynb \\"
+            echo "    notebooks/tier-a-hooks/01-gex-dashboard.ipynb --kernel python3"
+            echo "  python -m scripts.scrub_outputs notebooks/tier-a-hooks/01-gex-dashboard.ipynb"
+            echo "  git commit"
           fi
-          echo "No drift — recipe outputs match committed state."
