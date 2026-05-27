@@ -27,7 +27,6 @@ dev = [
     "pre-commit>=3.6",
     "yarl>=1.9",
     "ImageHash>=4.3",
-    "pytest-approval>=0.2",
     "requests>=2.31",
     "pytest-cov>=4.1",
     "hypothesis>=6.100",
