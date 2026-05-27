@@ -48,8 +48,8 @@ jobs:
       - name: Layer 4 — static tier gating
         run: pytest tests/test_layer4_tier_static.py -v
 
-      - name: Cookbook tools — unit tests
-        run: pytest tests/cookbook_tools/ -v
+      - name: Cookbook tools — unit tests with coverage
+        run: pytest tests/cookbook_tools/ -v --cov=cookbook_tools --cov=scripts --cov-report=term-missing
 
       - name: Layer 2 — cassette replay
         run: pytest tests/test_layer2_execution.py -v -m cassette
