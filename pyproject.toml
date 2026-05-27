@@ -28,6 +28,7 @@ dev = [
     "yarl>=1.9",
     "ImageHash>=4.3",
     "pytest-approval>=0.2",
+    "requests>=2.31",
 ]
 
 [tool.setuptools.packages.find]
@@ -38,4 +39,5 @@ testpaths = ["tests"]
 markers = [
     "integration: tests that call the live FlashAlpha API (require FLASHALPHA_API_KEY)",
     "cassette: tests that replay vcrpy cassettes (no API key)",
+    "network: tests that require live network access",
 ]
