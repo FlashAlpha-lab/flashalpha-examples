@@ -1,0 +1,40 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "$id": "https://github.com/FlashAlpha-lab/flashalpha-examples/endpoint_tiers.schema.json",
+  "title": "FlashAlpha endpoint tier map",
+  "description": "Prefix → required-tier mapping. Order matters — first prefix match wins (matches the C# EndpointAccessMiddleware semantics). Generated and kept in sync by scripts/sync_tier_map.py. Editors that support JSON Schema (VS Code, Cursor, JetBrains via vscode-yaml) will validate this yaml against the schema.",
+  "type": "object",
+  "required": ["tiers", "rules"],
+  "additionalProperties": false,
+  "properties": {
+    "tiers": {
+      "type": "array",
+      "description": "Canonical tier vocabulary, ordered least-to-most permissive.",
+      "items": { "type": "string", "enum": ["free", "basic", "growth", "alpha"] },
+      "minItems": 4,
+      "maxItems": 4
+    },
+    "rules": {
+      "type": "array",
+      "description": "Ordered list of (prefix, required-tier) rules. First match wins, so more-specific prefixes must come before less-specific ones (e.g. /v1/flow/levels/ before /v1/flow/).",
+      "items": {
+        "type": "object",
+        "required": ["prefix", "required"],
+        "additionalProperties": false,
+        "properties": {
+          "prefix": {
+            "type": "string",
+            "description": "Path prefix. A request whose path starts with this string requires the `required` tier or higher.",
+            "pattern": "^/"
+          },
+          "required": {
+            "type": "string",
+            "enum": ["free", "basic", "growth", "alpha"],
+            "description": "Minimum subscription tier needed to call any endpoint matching this prefix."
+          }
+        }
+      },
+      "minItems": 1
+    }
+  }
+}
