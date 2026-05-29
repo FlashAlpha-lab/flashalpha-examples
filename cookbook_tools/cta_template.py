@@ -13,7 +13,7 @@ _TIER_DISPLAY = {
 }
 
 _SIGNUP_URL = (
-    "https://flashalpha.com/signup"
+    "https://flashalpha.com/profile"
     "?utm_source=github-cookbook&utm_medium=notebook&utm_campaign={slug}"
 )
 _PRICING_URL = (

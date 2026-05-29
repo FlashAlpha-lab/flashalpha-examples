@@ -56,14 +56,6 @@ def _check_url(url: str, cache: dict[str, dict]) -> tuple[int, str]:
     return r.status_code, "network"
 
 
-# flashalpha.com/signup returns 404 as of 2026-05-27; all other CTAs pass.
-# The URL is correct per Phase 0 spec — the marketing site's /signup route is
-# temporarily broken. Mark xfail so CI surfaces it as an expected failure
-# rather than blocking the build. Remove once the route is restored.
-@pytest.mark.xfail(
-    reason="flashalpha.com/signup returns 404 (marketing site route broken as of 2026-05-27); URL is correct per spec",
-    strict=False,
-)
 def test_all_recipe_cta_urls_respond_2xx(recipe_path: pathlib.Path):
     nb = load_notebook(recipe_path)
     urls = extract_markdown_urls(nb)

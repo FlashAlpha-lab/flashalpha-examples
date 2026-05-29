@@ -47,7 +47,7 @@ def test_top_cell_always_contains_signup_url_with_correct_utm(
 ):
     md = render_top_cell(fm, tier_dir=tier_dir)
     assert f"utm_campaign={fm.slug}" in md
-    assert "flashalpha.com/signup" in md
+    assert "flashalpha.com/profile" in md
     assert f"notebooks/{tier_dir}/{fm.slug}.ipynb" in md
 
 

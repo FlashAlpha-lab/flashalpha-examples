@@ -30,7 +30,7 @@ def test_top_cell_contains_signup_url_with_utm():
     md = render_top_cell(_fm(), tier_dir="tier-a-hooks")
     assert "# Build a GEX Dashboard in 30 Lines" in md
     assert (
-        "https://flashalpha.com/signup?utm_source=github-cookbook"
+        "https://flashalpha.com/profile?utm_source=github-cookbook"
         "&utm_medium=notebook&utm_campaign=01-gex-dashboard"
         in md
     )

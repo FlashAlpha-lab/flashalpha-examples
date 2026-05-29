@@ -20,7 +20,7 @@
 # # Build a GEX Dashboard in 30 Lines
 #
 # > 🔑 Get a free FlashAlpha API key (5 req/day, no card):
-# >   https://flashalpha.com/signup?utm_source=github-cookbook&utm_medium=notebook&utm_campaign=01-gex-dashboard
+# >   https://flashalpha.com/profile?utm_source=github-cookbook&utm_medium=notebook&utm_campaign=01-gex-dashboard
 # >
 # > Tier required: **Free** · [![Open in Colab](https://colab.research.google.com/assets/colab-badge.svg)](https://colab.research.google.com/github/FlashAlpha-lab/flashalpha-examples/blob/main/notebooks/tier-a-hooks/01-gex-dashboard.ipynb)
 

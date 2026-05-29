@@ -71,7 +71,7 @@ def test_scaffolded_notebook_has_top_and_bottom_cta_with_correct_utm(
     nb = load_notebook(tmp_path / "notebooks" / "tier-a-hooks" / "demo-99-test.ipynb")
     urls = extract_markdown_urls(nb)
     assert any("utm_campaign=demo-99-test" in u for u in urls)
-    assert any("flashalpha.com/signup" in u for u in urls)
+    assert any("flashalpha.com/profile" in u for u in urls)
     assert any("flashalpha.com/pricing" in u for u in urls)
     assert any("flashalpha.com/discord" in u for u in urls)
 
