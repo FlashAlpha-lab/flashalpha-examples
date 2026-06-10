@@ -65,6 +65,42 @@ See [docs/superpowers/specs/2026-05-25-flashalpha-cookbook-design.md](docs/super
 - `endpoint_tiers.yaml` — mirror of API tier middleware (`scripts/sync_tier_map.py` to regenerate)
 - `docs/superpowers/{specs,plans}/` — design + implementation docs
 
+## What the API covers
+
+Recipes can call the full FlashAlpha endpoint surface. Beyond the core exposure
+analytics (`/v1/exposure/gex|dex|vex|chex|summary|levels|narrative`, max pain,
+SVI surfaces, VRP, 0DTE exposure, and the live/recent/blocks flow feeds), recent
+endpoint families include:
+
+- **Strategy Signals** (`/v1/strategies/*`) — 10 systematic signals
+  (flow-anomaly, expiry-positioning, zero-dte, dealer-regime, vol-carry,
+  yield-enhancement, surface-anomaly, skew, term-structure, tail-pricing) behind
+  one uniform decision envelope, for trade selection and signal backtesting.
+- **Earnings analytics** (`/v1/earnings/*`) — calendar, expected-move, history,
+  iv-crush, earnings VRP, dealer-positioning, strategies, and a screener.
+- **Structures** (`POST /v1/structures/pnl`, `POST /v1/structures/greeks`) —
+  payoff curves and aggregate Greeks for arbitrary multi-leg structures.
+- **Zero-DTE Flow** (`/v1/flow/zero-dte/snapshot|series|hedge-flow|heatmap|strike-flow`)
+  — intraday dealer-hedging and signed-flow analytics.
+- **Extended exposure** (`/v1/exposure/sheet|term-structure|basket|oi-diff`) —
+  per-strike sheets, exposure across expiries, basket/portfolio exposure, and
+  open-interest deltas.
+- **Volatility extras** — `/v1/surface/svi`, `/v1/volatility/skew-term`,
+  `/v1/volatility/spot-vol-correlation`,
+  `/v1/volatility/realized` (Alpha+, range-based realized vol estimators:
+  close-to-close, Parkinson, Garman-Klass, Rogers-Satchell, Yang-Zhang over
+  rv10/rv20/rv30 windows),
+  `/v1/volatility/forecast` (Alpha+, conditional vol forecasts via EWMA,
+  HAR-RV, and GARCH(1,1) MLE), `/v1/dispersion`, `/v1/expected-move`,
+  `/v1/liquidity`.
+- **Macro / universe** — `/v1/macro/vix-state`, `/v1/universe`,
+  `/v1/screener/fields`, plus `/v1/flow/options/{symbol}/dealer-premium`,
+  `/v1/flow/stocks/{symbol}/bars`, and `/v1/vrp/{symbol}/history`.
+
+Tier requirements for every endpoint live in [endpoint_tiers.yaml](endpoint_tiers.yaml);
+full request/response shapes are documented at the
+[FlashAlpha API reference](https://lab.flashalpha.com/llms.txt).
+
 ## License
 
 MIT. See [LICENSE](LICENSE).
