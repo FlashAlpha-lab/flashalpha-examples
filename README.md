@@ -101,6 +101,18 @@ Tier requirements for every endpoint live in [endpoint_tiers.yaml](endpoint_tier
 full request/response shapes are documented at the
 [FlashAlpha API reference](https://lab.flashalpha.com/llms.txt).
 
+## Futures (CME equity-index)
+
+Recipes can target **CME equity-index futures** — **`ES=F`** (E-mini S&P 500) and **`NQ=F`** (E-mini Nasdaq-100) — through the same endpoints as equities. Options-on-futures are priced with **Black-76** (forward-priced) using the correct CME contract multipliers. Everything that works for an equity works for futures: gamma exposure (GEX), DEX, VEX, CHEX, key levels, max pain, the IV surface, exposure summary, narrative, and live flow.
+
+```bash
+# Gamma exposure for the E-mini S&P 500 future (note the %3D-encoded '=')
+curl -H "X-Api-Key: $FLASHALPHA_API_KEY" \
+  "https://lab.flashalpha.com/v1/exposure/gex/ES%3DF"
+```
+
+Use the `=F` suffix — bare `ES`/`NQ` are equities, not futures. In raw REST paths URL-encode the `=` as `%3D` (e.g. `GET /v1/exposure/gex/ES%3DF`); the `flashalpha` SDK methods take the plain string `"ES=F"`. Historical replay for futures is coming; live analytics are available now.
+
 ## License
 
 MIT. See [LICENSE](LICENSE).
