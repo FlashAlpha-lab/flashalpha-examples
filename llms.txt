@@ -4,6 +4,18 @@
 
 The repository at https://github.com/FlashAlpha-lab/flashalpha-examples hosts the cookbook itself. The FlashAlpha API it calls is documented separately at https://lab.flashalpha.com/llms.txt — both the live surface (`api.flashalpha.com`) and the historical replay surface (`historical.flashalpha.com`) return identical response shapes; backtest recipes use historical, real-time recipes use live.
 
+## Data provenance
+
+Every FlashAlpha API response carries `data_as_of`: when each upstream feed last delivered
+to the node that answered - equity and index spot, their option chains, futures and futures
+options, the classified trade tape, settled open interest, and the macro series, each
+reported separately because they arrive over different pipes and fail independently. `null`
+means that node has not seen that feed, not that it is broken. Read each feed against its
+own cadence: settled open interest dated to the previous session's close is correct, while
+an options feed an hour behind during the regular session is not. `endpoint_version`
+identifies the deployment. Full reference:
+https://flashalpha.com/docs/lab-api-overview#response-envelope
+
 ## Quick start
 
 ```bash
