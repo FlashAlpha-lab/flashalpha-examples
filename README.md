@@ -114,6 +114,7 @@ endpoint families include:
   (flow-anomaly, expiry-positioning, zero-dte, dealer-regime, vol-carry,
   yield-enhancement, surface-anomaly, skew, term-structure, tail-pricing) behind
   one uniform decision envelope, for trade selection and signal backtesting.
+- **sell-window** (`/v1/strategies/sell-window/{symbol}`): should you sell options today? More than 5 million backtests led to it. Every session, for SPY, QQQ and IWM, it says sell or skip for four listed expiries, and on a sell it lists the trades to place, with strikes, quotes and the exit rule. Own response shape. See [notebooks/13_sell_window.py](notebooks/13_sell_window.py), the [API docs](https://flashalpha.com/docs/lab-api-strategies-sell-window?utm_source=github&utm_medium=readme&utm_campaign=repo-flashalpha-examples&utm_content=sell-window) and the [backtest](https://flashalpha.com/articles/sell-window-backtest-every-trade-2018-2026?utm_source=github&utm_medium=readme&utm_campaign=repo-flashalpha-examples&utm_content=sell-window).
 - **Earnings analytics** (`/v1/earnings/*`) — calendar, expected-move, history,
   iv-crush, earnings VRP, dealer-positioning, strategies, and a screener.
 - **Structures** (`POST /v1/structures/pnl`, `POST /v1/structures/greeks`) —
